@@ -1,0 +1,54 @@
+version: '3.4'
+
+services:
+  acessoteste.thiagopereira.web:
+    image: ${DOCKER_REGISTRY-}acessotestethiagopereiraweb
+    build:
+      context: .
+      dockerfile: src/AcessoTeste.ThiagoPereira.Web/Dockerfile
+  dynamodb:
+    image: amazon/dynamodb-local:latest
+    ports:
+      - "8000:8000"
+    command: ["-jar", "DynamoDBLocal.jar", "-sharedDb", "-inMemory"]
+  init-dynamo:
+    image: garland/aws-cli-docker
+    command: "aws dynamodb create-table --table-name AcessoTransactions --attribute-definitions AttributeName=id,AttributeType=S AttributeName=customerId,AttributeType=S --key-schema AttributeName=id,KeyType=HASH AttributeName=customerId,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 --endpoint-url http://dynamo:8000"
+    links:
+      - dynamodb
+    environment:
+      - AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY=AWS_SECRET_ACCESS_KEY
+      - AWS_DEFAULT_REGION=us-west-2
+  rabbit:
+    image: rabbitmq:3-management-alpine
+    hostname: rabbit-test-acesso
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    expose:
+     - 15672
+     - 5672
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.0
+    container_name: elasticsearch
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - docker-network
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.6.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - docker-network
+networks:
+  docker-network:
+    driver: bridge
+volumes:
+  elasticsearch-data:

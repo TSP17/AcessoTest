@@ -5,14 +5,14 @@ EXPOSE 443
 
 FROM microsoft/dotnet:2.2-sdk AS build
 WORKDIR /src
-COPY ["AcessoTeste.ThiagoPereira.Web/AcessoTeste.ThiagoPereira.Web.csproj", "AcessoTeste.ThiagoPereira.Web/"]
-RUN dotnet restore "AcessoTeste.ThiagoPereira.Web/AcessoTeste.ThiagoPereira.Web.csproj"
+COPY src/AcessoTeste.ThiagoPereira.Web/AcessoTeste.ThiagoPereira.Web.csproj src/AcessoTeste.ThiagoPereira.Web/
+RUN dotnet restore src/AcessoTeste.ThiagoPereira.Web/AcessoTeste.ThiagoPereira.Web.csproj
 COPY . .
-WORKDIR "/src/AcessoTeste.ThiagoPereira.Web"
-RUN dotnet build "AcessoTeste.ThiagoPereira.Web.csproj" -c Release -o /app
+WORKDIR /src/src/AcessoTeste.ThiagoPereira.Web
+RUN dotnet build AcessoTeste.ThiagoPereira.Web.csproj -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish "AcessoTeste.ThiagoPereira.Web.csproj" -c Release -o /app
+RUN dotnet publish AcessoTeste.ThiagoPereira.Web.csproj -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
