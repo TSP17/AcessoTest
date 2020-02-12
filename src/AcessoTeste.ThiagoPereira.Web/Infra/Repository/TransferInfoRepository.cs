@@ -45,7 +45,7 @@ namespace AcessoTeste.ThiagoPereira.Web.Infra.Repository
             return transferInfoResult;
         }
 
-        public async Task Put(TransferInfo transferInfo)
+        public async Task AddOrUpdate(TransferInfo transferInfo)
         {
             var request = new PutItemRequest
             {

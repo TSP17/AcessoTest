@@ -3,6 +3,7 @@ using AcessoTeste.ThiagoPereira.Web.Application.Response;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,10 +14,12 @@ namespace AcessoTeste.ThiagoPereira.Web.Controllers
     public class TransferController : ControllerBase
     {
         private readonly IMediator _mediatr;
+        public ILogger<TransferController> _logger;
 
-        public TransferController(IMediator mediatr)
+        public TransferController(IMediator mediatr, ILogger<TransferController> logger)
         {
             _mediatr = mediatr;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -24,6 +27,8 @@ namespace AcessoTeste.ThiagoPereira.Web.Controllers
         {
             try
             {
+                _logger.LogInformation("Transfer - Starting request", request);
+
                 var response = await _mediatr.Send(request);
 
                 if (!response.Erros.Any())
@@ -35,7 +40,7 @@ namespace AcessoTeste.ThiagoPereira.Web.Controllers
             }
             catch (System.Exception e)
             {
-
+                _logger.LogError(e.ToString(), request);
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
@@ -45,6 +50,8 @@ namespace AcessoTeste.ThiagoPereira.Web.Controllers
         {
             try
             {
+                _logger.LogInformation("TransferStatus - Starting request", id);
+
                 TransferStatusCommand command = new TransferStatusCommand()
                 {
                     TransactionId = id
@@ -62,6 +69,8 @@ namespace AcessoTeste.ThiagoPereira.Web.Controllers
             }
             catch (System.Exception e)
             {
+                _logger.LogError($"TransferStatus{e.ToString()}", id);
+
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }

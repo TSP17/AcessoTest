@@ -3,8 +3,6 @@ using AcessoTeste.ThiagoPereira.Web.Application.Response;
 using AcessoTeste.ThiagoPereira.Web.Infra.Helper;
 using MediatR;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -54,8 +52,8 @@ namespace AcessoTeste.ThiagoPereira.Web.Application.Commands
             }
 
             response.TransactionId = Guid.NewGuid().ToString();
-            // 4 - Gravar operação no DynamoDb.
 
+            // 4 - Gravar operação no DynamoDb.
             var transferInfo = new Models.TransferInfo()
             {
                 Id = response.TransactionId,
@@ -67,7 +65,7 @@ namespace AcessoTeste.ThiagoPereira.Web.Application.Commands
                 Value = request.Value.ToString()
             };
 
-            await _transferInfoRepository.Put(transferInfo);
+            await _transferInfoRepository.AddOrUpdate(transferInfo);
 
             // 5 - Enviar para Fila.
             await _sendQueuRepository.SendQueue(transferInfo);

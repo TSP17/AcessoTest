@@ -5,7 +5,7 @@ namespace AcessoTeste.ThiagoPereira.Web.Application.Interfaces
 {
     public interface ITransferInfoRepository
     {
-        Task Put(TransferInfo transferInfo);
+        Task AddOrUpdate(TransferInfo transferInfo);
         Task<TransferInfo> GetById(string Id);
         Task CreateTable();
 

@@ -2,12 +2,10 @@
 using AcessoTeste.ThiagoPereira.Web.Application.Models;
 using AcessoTeste.ThiagoPereira.Web.Application.Response.Api;
 using AcessoTeste.ThiagoPereira.Web.Infra.Helper;
-using AcessoTeste.ThiagoPereira.Web.Infra.IoC;
 using AcessoTeste.ThiagoPereira.Web.Service;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -15,11 +13,11 @@ namespace AcessoTeste.ThiagoPereira.Test.Handlers
 {
     public class TransferServiceTest
     {
-        //private readonly ITransferService _transferService;
         private readonly TransferService _transferService;
 
         private readonly Mock<IAcessoRepository> _acessoRepository;
         private readonly Mock<ITransferInfoRepository> _transferInfoRepository;
+        private readonly Mock<ILogger<TransferService>> _logger;
 
         public TransferInfo TransferInfo;
         public AcessoAcountResponse AcessoAcountResponse;
@@ -28,9 +26,9 @@ namespace AcessoTeste.ThiagoPereira.Test.Handlers
         {
             _acessoRepository = new Mock<IAcessoRepository>();
             _transferInfoRepository = new Mock<ITransferInfoRepository>();
+            _logger = new Mock<ILogger<TransferService>>();
 
-            // _transferService = DependencyInjector.GetService<ITransferService>();
-            _transferService = new TransferService(_transferInfoRepository.Object, _acessoRepository.Object);
+            _transferService = new TransferService(_transferInfoRepository.Object, _acessoRepository.Object, _logger.Object);
 
         }
 

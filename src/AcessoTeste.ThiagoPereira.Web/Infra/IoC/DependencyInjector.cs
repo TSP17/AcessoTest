@@ -7,6 +7,8 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
 using System;
 using System.IO;
 
@@ -40,7 +42,7 @@ namespace AcessoTeste.ThiagoPereira.Web.Infra.IoC
 
             services.AddScoped<IMediator, Mediator>();
 
-            // Dynamo Configuration
+            // Dynamo Configuration.
             Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", "AWS_ACCESS_KEY_ID");
             Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", "AWS_SECRET_ACCESS_KEY");
             Environment.SetEnvironmentVariable("AWS_REGION", "us-west-2");
@@ -58,8 +60,22 @@ namespace AcessoTeste.ThiagoPereira.Web.Infra.IoC
                 return new AmazonDynamoDBClient(clientConfig);
             });
 
-            services.RegisterEasyNetQ("host=localhost:5672;username=guest;password=guest");
-            //services.AddSingleton<IManagementClient>(p => new ManagementClient("localhost:5672", "guest", "guest"));
+            // ElasticSearch Configuration.
+            var elasticUri = configuration["ElasticConfiguration:Uri"];
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(elasticUri))
+                {
+                    AutoRegisterTemplate = true,
+                })
+            .CreateLogger();
+
+            var rabbitHostName = configuration["RabbitConfiguration:HostName"];
+            var rabbitPort = configuration["RabbitConfiguration:Port"];
+            var rabbitUserName = configuration["RabbitConfiguration:Username"];
+            var rabbitPassword = configuration["RabbitConfiguration:Password"];
+
+            services.RegisterEasyNetQ($"host={rabbitHostName}:{rabbitPort};username={rabbitUserName};password={rabbitPassword}");
 
             services.AddMediatR();
 
