@@ -23,9 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
+    <ProjectReference Include="..\..\src\AcessoTeste.ThiagoPereira.Web\AcessoTeste.ThiagoPereira.Web.csproj" />
   </ItemGroup>
 
 </Project>
