@@ -40,6 +40,8 @@ namespace AcessoTeste.ThiagoPereira.Web.Infra.Repository
                 var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await client.PostAsync($"{_configuration.GetValue<string>("AcessoApi:Url")}{_configuration.GetValue<string>("AcessoApi:AccountRoute")}", content);
 
+                response.EnsureSuccessStatusCode();
+
                 string responseData = await response.Content.ReadAsStringAsync();
 
                 return string.IsNullOrEmpty(responseData);
