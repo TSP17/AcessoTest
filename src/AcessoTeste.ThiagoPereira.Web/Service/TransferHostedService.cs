@@ -31,6 +31,7 @@ namespace AcessoTeste.ThiagoPereira.Web.Service
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            // Teste Git.
             try
             {
                 _logger.LogInformation("StartAsync TransferJob");
